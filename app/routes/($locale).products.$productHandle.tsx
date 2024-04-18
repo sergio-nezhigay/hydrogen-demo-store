@@ -80,7 +80,6 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   // Investigate if we can avoid the redirect for product pages with no search params for first variant
   const firstVariant = product.variants.nodes[0];
   const selectedVariant = product.selectedVariant ?? firstVariant;
-
   const seo = seoPayload.product({
     product,
     selectedVariant,
