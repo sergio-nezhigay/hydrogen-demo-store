@@ -157,21 +157,18 @@ export default function Product() {
               </Suspense>
               <div className="grid gap-4 py-4">
                 {descriptionHtml && (
-                  <ProductDetail
-                    title="Product Details"
-                    content={descriptionHtml}
-                  />
+                  <ProductDetail title="Опис" content={descriptionHtml} />
                 )}
                 {shippingPolicy?.body && (
                   <ProductDetail
-                    title="Shipping"
+                    title="Доставка"
                     content={getExcerpt(shippingPolicy.body)}
                     learnMore={`/policies/${shippingPolicy.handle}`}
                   />
                 )}
                 {refundPolicy?.body && (
                   <ProductDetail
-                    title="Returns"
+                    title="Правила повернення"
                     content={getExcerpt(refundPolicy.body)}
                     learnMore={`/policies/${refundPolicy.handle}`}
                   />

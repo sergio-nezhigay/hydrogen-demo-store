@@ -44,4 +44,16 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
+      options: {
+        /**
+         * Configure the Prettier settings here.
+         * For 'endOfLine': 'auto', you can simply set it like this:
+         */
+        endOfLine: 'auto',
+      },
+    },
+  ],
 };
