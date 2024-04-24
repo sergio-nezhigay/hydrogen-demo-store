@@ -2,6 +2,7 @@ import type {SyntheticEvent} from 'react';
 import {useMemo, useState} from 'react';
 import {Menu, Disclosure} from '@headlessui/react';
 import type {Location} from '@remix-run/react';
+
 import {
   Link,
   useLocation,
@@ -11,6 +12,7 @@ import {
 import useDebounce from 'react-use/esm/useDebounce';
 import type {
   Filter,
+  FilterValue,
   ProductFilter,
 } from '@shopify/hydrogen/storefront-api-types';
 
@@ -43,7 +45,7 @@ export function SortFilter({
   children,
   collections = [],
 }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   return (
     <>
       <div className="flex items-center justify-between w-full">
@@ -78,11 +80,23 @@ export function FiltersDrawer({
   appliedFilters = [],
 }: Omit<Props, 'children'>) {
   const [params] = useSearchParams();
-  console.log('🚀 ~ params:', params);
   const location = useLocation();
-  console.log('🚀 ~ location:', location);
+  const navigate = useNavigate();
 
-  const filterMarkup = (filter: Filter, option: Filter['values'][0]) => {
+  const handleFilterToggle = (filter: Filter, option: FilterValue) => {
+    const filterIndex = appliedFilters.findIndex((appliedFilter) => {
+      return JSON.stringify(appliedFilter.filter) === option.input;
+    });
+    if (filterIndex !== -1) {
+      const removedFilter = appliedFilters[filterIndex];
+      navigate(getDeletedAppliedFilterLink(removedFilter, params, location));
+    } else {
+      const newUrl = getFilterLink(option.input as string, params, location);
+      navigate(newUrl);
+    }
+  };
+
+  const filterMarkup = (filter: Filter, option: FilterValue) => {
     switch (filter.type) {
       case 'PRICE_RANGE':
         const priceFilter = params.get(`${FILTER_URL_PREFIX}price`);
@@ -95,16 +109,19 @@ export function FiltersDrawer({
         return <PriceRangeFilter min={min} max={max} />;
 
       default:
-        const to = getFilterLink(option.input as string, params, location);
-        console.log('option.input', option.input);
+        const isChecked = appliedFilters.some((appliedFilter) => {
+          return JSON.stringify(appliedFilter.filter) === option.input;
+        });
+
         return (
-          <Link
-            className="focus:underline hover:underline"
-            prefetch="intent"
-            to={to}
-          >
-            {option.label}
-          </Link>
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={() => handleFilterToggle(filter, option)}
+            />
+            <span>{option.label}</span>
+          </label>
         );
     }
   };
@@ -119,11 +136,16 @@ export function FiltersDrawer({
         ) : null}
 
         <Heading as="h4" size="lead" className="pb-4">
-          Filter By
+          Фільтрація по
         </Heading>
         <div className="divide-y">
           {filters.map((filter: Filter) => (
-            <Disclosure as="div" key={filter.id} className="w-full">
+            <Disclosure
+              as="div"
+              defaultOpen={true}
+              key={filter.id}
+              className="w-full"
+            >
               {({open}) => (
                 <>
                   <Disclosure.Button className="flex justify-between w-full py-4">
@@ -157,13 +179,13 @@ function AppliedFilters({filters = []}: {filters: AppliedFilter[]}) {
   return (
     <>
       <Heading as="h4" size="lead" className="pb-4">
-        Applied filters
+        Вибрані фільтри
       </Heading>
       <div className="flex flex-wrap gap-2">
         {filters.map((filter: AppliedFilter) => {
           return (
             <Link
-              to={getAppliedFilterLink(filter, params, location)}
+              to={getDeletedAppliedFilterLink(filter, params, location)}
               className="flex px-2 border rounded-full gap"
               key={`${filter.label}-${JSON.stringify(filter.filter)}`}
             >
@@ -179,7 +201,7 @@ function AppliedFilters({filters = []}: {filters: AppliedFilter[]}) {
   );
 }
 
-function getAppliedFilterLink(
+function getDeletedAppliedFilterLink(
   filter: AppliedFilter,
   params: URLSearchParams,
   location: Location,
@@ -207,7 +229,6 @@ function getFilterLink(
   location: ReturnType<typeof useLocation>,
 ) {
   const paramsClone = new URLSearchParams(params);
-
   const newParams = filterInputToParams(rawInput, paramsClone);
   return `${location.pathname}?${newParams.toString()}`;
 }
