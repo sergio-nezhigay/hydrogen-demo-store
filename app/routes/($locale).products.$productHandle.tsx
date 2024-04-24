@@ -35,6 +35,7 @@ import {seoPayload} from '~/lib/seo.server';
 import type {Storefront} from '~/lib/type';
 import {routeHeaders} from '~/data/cache';
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
+import {CustomMoney} from '~/components/CustomMoney';
 
 export const headers = routeHeaders;
 
@@ -139,9 +140,9 @@ export default function Product() {
                 <Heading as="h1" className="whitespace-normal">
                   {title}
                 </Heading>
-                {vendor && (
+                {/*{vendor && (
                   <Text className={'opacity-50 font-medium'}>{vendor}</Text>
-                )}
+                )}*/}
               </div>
               <Suspense fallback={<ProductForm variants={[]} />}>
                 <Await
@@ -184,7 +185,10 @@ export default function Product() {
           resolve={recommended}
         >
           {(products) => (
-            <ProductSwimlane title="Related Products" products={products} />
+            <ProductSwimlane
+              title="Також вас можуть зацікавити"
+              products={products}
+            />
           )}
         </Await>
       </Suspense>
@@ -361,13 +365,8 @@ export function ProductForm({
                   as="span"
                   className="flex items-center justify-center gap-2"
                 >
-                  <span>Add to Cart</span> <span>·</span>{' '}
-                  <Money
-                    withoutTrailingZeros
-                    data={selectedVariant?.price!}
-                    as="span"
-                    data-test="price"
-                  />
+                  <span>Купити</span> <span>·</span>{' '}
+                  <CustomMoney data={selectedVariant?.price!} />
                   {isOnSale && (
                     <Money
                       withoutTrailingZeros

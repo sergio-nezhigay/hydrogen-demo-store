@@ -78,7 +78,9 @@ export function FiltersDrawer({
   appliedFilters = [],
 }: Omit<Props, 'children'>) {
   const [params] = useSearchParams();
+  console.log('🚀 ~ params:', params);
   const location = useLocation();
+  console.log('🚀 ~ location:', location);
 
   const filterMarkup = (filter: Filter, option: Filter['values'][0]) => {
     switch (filter.type) {
@@ -94,6 +96,7 @@ export function FiltersDrawer({
 
       default:
         const to = getFilterLink(option.input as string, params, location);
+        console.log('option.input', option.input);
         return (
           <Link
             className="focus:underline hover:underline"
@@ -204,6 +207,7 @@ function getFilterLink(
   location: ReturnType<typeof useLocation>,
 ) {
   const paramsClone = new URLSearchParams(params);
+
   const newParams = filterInputToParams(rawInput, paramsClone);
   return `${location.pathname}?${newParams.toString()}`;
 }
@@ -310,21 +314,21 @@ function filterInputToParams(
 
 export default function SortMenu() {
   const items: {label: string; key: SortParam}[] = [
-    {label: 'Featured', key: 'featured'},
+    {label: 'Рекомендовані', key: 'featured'},
     {
-      label: 'Price: Low - High',
+      label: 'Від дешевих до дорогих',
       key: 'price-low-high',
     },
     {
-      label: 'Price: High - Low',
+      label: 'Від дорогих до дешевих',
       key: 'price-high-low',
     },
     {
-      label: 'Best Selling',
+      label: 'Найпопулярніші',
       key: 'best-selling',
     },
     {
-      label: 'Newest',
+      label: 'Найновіші',
       key: 'newest',
     },
   ];
