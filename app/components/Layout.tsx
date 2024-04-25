@@ -3,7 +3,7 @@ import useWindowScroll from 'react-use/esm/useWindowScroll';
 import {Disclosure} from '@headlessui/react';
 import {Suspense, useEffect, useMemo} from 'react';
 import {CartForm} from '@shopify/hydrogen';
-
+import {Image} from '@shopify/hydrogen';
 import {type LayoutQuery} from 'storefrontapi.generated';
 import {Text, Heading, Section} from '~/components/Text';
 import {Link} from '~/components/Link';
@@ -47,9 +47,15 @@ export function Layout({children, layout}: LayoutProps) {
             Skip to content
           </a>
         </div>
-        {headerMenu && layout?.shop.name && (
-          <Header title={layout.shop.name} menu={headerMenu} />
-        )}
+        {headerMenu &&
+          layout?.shop.name &&
+          layout?.shop.brand?.logo?.image?.url && (
+            <Header
+              title={layout.shop.name}
+              logoSrc={layout.shop.brand.logo.image.url}
+              menu={headerMenu}
+            />
+          )}
         <main role="main" id="mainContent" className="flex-grow">
           {children}
         </main>
@@ -59,7 +65,15 @@ export function Layout({children, layout}: LayoutProps) {
   );
 }
 
-function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
+function Header({
+  title,
+  logoSrc,
+  menu,
+}: {
+  title: string;
+  logoSrc: string;
+  menu?: EnhancedMenu;
+}) {
   const isHome = useIsHomePath();
 
   const {
@@ -91,6 +105,7 @@ function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
       <DesktopHeader
         isHome={isHome}
         title={title}
+        logoSrc={logoSrc}
         menu={menu}
         openCart={openCart}
       />
@@ -249,14 +264,17 @@ function DesktopHeader({
   menu,
   openCart,
   title,
+  logoSrc,
 }: {
   isHome: boolean;
   openCart: () => void;
   menu?: EnhancedMenu;
   title: string;
+  logoSrc: string;
 }) {
   const params = useParams();
   const {y} = useWindowScroll();
+
   return (
     <header
       role="banner"
@@ -270,7 +288,13 @@ function DesktopHeader({
     >
       <div className="flex gap-12">
         <Link className="font-bold" to="/" prefetch="intent">
-          {title}
+          <Image
+            width={40}
+            height={40}
+            src={logoSrc}
+            className="object-cover object-center size-10  "
+            alt="logo"
+          />
         </Link>
         <nav className="flex gap-8">
           {/* Top level menu items */}
