@@ -284,7 +284,7 @@ function PriceRangeFilter({max, min}: {max?: number; min?: number}) {
   return (
     <div className="flex flex-col">
       <label className="mb-4">
-        <span>from</span>
+        <span>Від</span>
         <input
           name="minPrice"
           className="text-black"
@@ -295,7 +295,7 @@ function PriceRangeFilter({max, min}: {max?: number; min?: number}) {
         />
       </label>
       <label>
-        <span>to</span>
+        <span>до</span>
         <input
           name="maxPrice"
           className="text-black"
