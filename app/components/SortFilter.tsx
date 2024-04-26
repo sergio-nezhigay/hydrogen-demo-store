@@ -19,6 +19,8 @@ import type {
 import {Heading, Text} from '~/components/Text';
 import {IconFilters, IconCaret, IconXMark} from '~/components/Icon';
 
+import {Button} from './ui/button';
+
 export type AppliedFilter = {
   label: string;
   filter: ProductFilter;
@@ -134,7 +136,7 @@ export function FiltersDrawer({
             <AppliedFilters filters={appliedFilters} />
           </div>
         ) : null}
-
+        <Button>Click me</Button>
         <Heading as="h4" size="lead" className="pb-4">
           Фільтрація по
         </Heading>
